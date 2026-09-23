@@ -6,6 +6,11 @@ Built with Google's **Agent Development Kit (ADK)** and deployed with **`agents-
 
 <div align="center">
   <img src="assets/demo.gif" alt="CheckGuard Demo" width="85%" />
+  <p>
+    📹 <b>Video Walkthroughs:</b>
+    <a href="assets/antigravity_tutorial_walkthrough.mp4"><b>Watch Antigravity End-to-End Tutorial (1080p)</b></a> &nbsp;|&nbsp;
+    <a href="assets/cloudrun_demo.mp4"><b>Watch Live Cloud Run Demo</b></a>
+  </p>
 </div>
 
 ---
