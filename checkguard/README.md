@@ -27,8 +27,20 @@ CheckGuard assists tellers and managers during check-cashing transactions by exe
 11. **Durable Cross-Session Memory**: Stores teller preferences and operational facts across sessions via Vertex AI Memory Bank.
 12. **Code Execution Sandbox**: Executes data models and fee formulas within Agent Platform's secure sandbox environment.
 
-> [!NOTE]
-> **Planned, Not Yet Implemented**: Multimodal OCR check image scanning (reading handwritten check photos directly via vision models) was planned in the project brief but is not yet implemented in the current code.
+---
+
+## 🔮 Future Enhancements
+
+The following roadmap items and compliance modules are planned for subsequent iterations:
+
+1. **Multimodal OCR Check Image Scanning**: Reading handwritten check photos directly via vision models (planned in the original project brief, not yet implemented in the current code).
+2. **FinCEN Regulatory Adherences**:
+   - Automated Currency Transaction Report (CTR) flagging for cash payouts exceeding statutory thresholds ($10,000+).
+   - Suspicious Activity Report (SAR) indicators for structured transactions or irregular multi-check patterns.
+   - Comprehensive Customer Due Diligence (CDD) and Money Services Business (MSB) recordkeeping rules.
+3. **State and Local Government Regulation Compliances**:
+   - Dynamic statutory fee caps conforming to specific state banking department laws (e.g., maximum percentage caps for government vs. personal checks by jurisdiction).
+   - Local licensing, identification requirements, and mandatory store disclosure compliance.
 
 ---
 
