@@ -1,198 +1,136 @@
+# CheckGuard: Check Cashing Risk & Verification Assistant
+
+An agentic AI assistant designed for check-cashing business tellers and store managers to assess transaction risk, verify issuing institutions, calculate cashing fees, inspect historical records, and track business statistics.
+
+Built with Google's **Agent Development Kit (ADK)** and deployed with **`agents-cli`** on Google Cloud Agent Platform.
+
 <div align="center">
-
-<img src="assets/build-with-gemini-banner.png" alt="Build with Gemini" width="100%" />
-
-# 🚀 Build with Gemini · Track 3
-
-### The starter kit for Track 3 of the Build with Gemini World Tour, and a showcase of what participants built with it.
-
-Clone this repo, open [Antigravity](https://antigravity.google), and build your own agent-first app on Google Cloud. Every project in the [gallery below](#-featured-projects) was built the same way: prototyped with Antigravity and `agents-cli`, equipped with Memory, tools, and storage, deployed to Agent Platform, and given a face on Cloud Run.
-
-<br/>
-
-![Build with Gemini](https://img.shields.io/badge/Build%20with%20Gemini-World%20Tour-4285F4?logo=google&logoColor=white)
-![Track 3](https://img.shields.io/badge/Track%203-Agent--First%20Apps-EA4335)
-![Google Cloud](https://img.shields.io/badge/Google%20Cloud-Agent%20Platform-4285F4?logo=googlecloud&logoColor=white)
-![Built with ADK](https://img.shields.io/badge/Built%20with-ADK%20%2B%20agents--cli-34A853)
-![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)
-![Projects](https://img.shields.io/badge/Projects-8-blue)
-
-<sub>📖 <a href="https://cszhu.github.io/build-with-gemini/">Lab Guide</a> · 🛠️ <a href="https://google.github.io/agents-cli/guide/getting-started/">agents-cli</a> · 🤖 <a href="https://google.github.io/adk-docs/">ADK</a></sub>
-
+  <img src="assets/demo.gif" alt="CheckGuard Demo" width="85%" />
 </div>
 
 ---
 
-## 📚 Table of Contents
+## 🌟 What CheckGuard Does
 
-- [🧩 Anatomy of a Track 3 Project](#-anatomy-of-a-track-3-project)
-- [📂 Featured Projects](#-featured-projects)
-  - [🛍️ Commerce & Marketplace Agents](#️-commerce--marketplace-agents)
-  - [🍳 Food & Recipe Agents](#-food--recipe-agents)
-  - [✈️ Travel & Local Agents](#️-travel--local-agents)
-  - [💪 Health, Fitness & Wellness Agents](#-health-fitness--wellness-agents)
-  - [📚 Learning & Knowledge Agents](#-learning--knowledge-agents)
-  - [🎨 Creative & Media Agents](#-creative--media-agents)
-  - [🏢 Productivity & Enterprise Agents](#-productivity--enterprise-agents)
-  - [🧪 Experimental & Other](#-experimental--other)
-- [🧠 What's in this Repo](#-whats-in-this-repo)
-- [🧰 Build Your Own](#-build-your-own)
-- [📚 Resources](#-resources)
-- [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
+CheckGuard assists tellers and managers during check-cashing transactions by executing real-time checks and business intelligence queries:
 
----
+1. **FDIC Financial Institution Verification**: Queries the public FDIC BankFind API to verify that the check's issuing bank is active and FDIC-insured.
+2. **Address Geocoding & Local Branch Lookup**: Uses Google Maps Geocoding and Google Places API to verify business addresses printed on checks and locate nearby branches.
+3. **Historical Ledger Search**: Queries Google Cloud Firestore (`check_records`) for historical records matching the bearer (payee) or issuer (payer) to detect previous returned checks, cleared transactions, or fraud flags.
+4. **Entity Risk Profiling**: Retrieves risk standing and history for both the check issuer and check bearer from Firestore (`entity_risk_profiles`).
+5. **Cashing Fee & Net Payout Calculation**: Calculates statutory and store fee rates by check type (payroll, government, cashier, personal) and risk tier, flagging checks that require manager approval.
+6. **Decision Recording**: Persists new check verification outcomes (approved, held, rejected) directly to Firestore.
+7. **Business & Financial Statistics**: Computes store-level operational metrics—including cashed vs. rejected counts, bounce rates, total fees earned, and default losses across monthly or yearly periods.
+8. **Marketing Graphic Generation**: Uses `gemini-3.1-flash-lite-image` on Vertex AI to produce branded service badges and store promo graphics, automatically uploading them to Google Cloud Storage (with strict PII/PCI security guardrails).
+9. **Promotional Video Generation**: Leverages Google's Omni model (`gemini-omni-flash-preview`) to generate short motion graphics for marketing, uploaded to Google Cloud Storage.
+10. **Rich Agent-First UI (A2UI)**: Renders structured transaction summaries, status cards, and fee breakdowns using A2UI cards rather than plain text.
+11. **Durable Cross-Session Memory**: Stores teller preferences and operational facts across sessions via Vertex AI Memory Bank.
+12. **Code Execution Sandbox**: Executes data models and fee formulas within Agent Platform's secure sandbox environment.
 
-## 🧩 Anatomy of a Track 3 Project
-
-Every app in this collection is built from the same set of Google Cloud building blocks introduced in the lab. Once you understand this shape, you can read any project here at a glance:
-
-| Layer | What it does | Powered by |
-|---|---|---|
-| 🤖 **The Agent** | The core reasoning loop | [ADK](https://google.github.io/adk-docs/) + [`agents-cli`](https://google.github.io/agents-cli/guide/getting-started/), scaffolded with [Antigravity](https://antigravity.google) |
-| 🧠 **Memory** | Remembers facts across sessions | [Agent Platform Memory Bank](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/memory-bank) |
-| 🗄️ **Structured data** | Inventory, records, lists | [Firestore](https://console.cloud.google.com/firestore) |
-| 🖼️ **Files & blobs** | Images, media, assets | [Cloud Storage](https://console.cloud.google.com/storage) |
-| 🔧 **Tools** | Take real actions and fetch real data | ADK function tools |
-| 🎨 **Media generation** | Creates images (and video) on demand | `gemini-3.1-flash-lite-image` (Nano Banana 2 Lite) · Omni (video) |
-| 🧪 **Code sandbox** | Safely runs generated code | Agent Platform code execution |
-| 🪟 **Agent-first UI** | Cards and tables instead of plain text | [A2UI](https://adk.dev/integrations/a2ui/) |
-| 🌐 **Frontend** | A shareable web face | FastAPI proxy on [Cloud Run](https://cloud.google.com/run) |
+> [!NOTE]
+> **Planned, Not Yet Implemented**: Multimodal OCR check image scanning (reading handwritten check photos directly via vision models) was planned in the project brief but is not yet implemented in the current code.
 
 ---
 
-## 📂 Featured Projects
+## 🏗️ Architecture & Wired Google Cloud Services
 
-A showcase of what workshop participants built with this lab. Entries are added here from the swag and gallery submission form after each event, so the categories below start empty and fill in over time. Browse them for inspiration, or [submit your own](#-contributing) once you've published your project with the `publish-to-github` skill.
-
-<!--
-Add one entry per project, in this format:
-- 🌿 **[Project Name](https://github.com/their-handle/their-repo)**: one-line description of what it does. <br/> <sub>by [@handle](https://github.com/handle)</sub>
-
-Bump the "Projects" badge count at the top when you add one.
--->
-
-### 🛍️ Commerce & Marketplace Agents
-
-### 🍳 Food & Recipe Agents
-
-- 🥫 **[Smart Pantry Recipe Concierge](https://github.com/matthewrose/buildwithgemini-smart-pantry-recipe-concierge)**: Tracks your pantry and recommends recipes grounded in a real recipe corpus. <br/> <sub>by [@matthewrose](https://github.com/matthewrose)</sub>
-
-### ✈️ Travel & Local Agents
-
-- ⛈️ **[SafeStageWX](https://github.com/felix1028/buildwithgemini-safestagewx)**: An agentic mobile app that helps event planners identify weather threats and climate risks for an event given its date and location, providing tailored preparedness timelines from months out down to hourly day-of forecasts. <br/> <sub>by [@felix1028](https://github.com/felix1028)</sub>
-- 🌇 **[Sidewalk & Sun](https://github.com/OlafHaalstra/buildwithgemini-sidewalk-and-sun)**: Recommends sunny or shaded NYC spots from a curated 500-venue corpus, plotted on an interactive map. <br/> <sub>by [@OlafHaalstra](https://github.com/OlafHaalstra)</sub>
-
-### 💪 Health, Fitness & Wellness Agents
-
-- 🏊 **[TriCoach AI](https://github.com/common-aman/buildwithgemini-tricoach-ai)**: A triathlon coach that logs workouts, computes training zones, and generates motivational visuals. <br/> <sub>by [@common-aman](https://github.com/common-aman)</sub>
-
-### 📚 Learning & Knowledge Agents
-
-- 🎤 **[Interview Coach (PrepPal)](https://github.com/VineethBaradi/buildwithgemini-interview-coach)**: A mock-interview coach that runs LLM-driven practice sessions from a Firestore question bank and gives performance feedback. <br/> <sub>by [@VineethBaradi](https://github.com/VineethBaradi)</sub>
-
-### 🎨 Creative & Media Agents
-
-### 🏢 Productivity & Enterprise Agents
-
-- 🔧 **[GitCraft](https://github.com/fpobletemu/buildwithgemini-gitcraft)**: A developer git assistant that inspects your repo and drafts Conventional-Commits-style messages, grounded in a commit-style guide. <br/> <sub>by [@fpobletemu](https://github.com/fpobletemu)</sub>
-- 🖥️ **[IT Helpdesk Agent](https://github.com/NaweedAhmadi/buildwithgemini-it-helpdesk-agent)**: An IT support assistant that answers from a knowledge base and remembers context across sessions, with a ticket dashboard UI. <br/> <sub>by [@NaweedAhmadi](https://github.com/NaweedAhmadi)</sub>
-
-### 🧪 Experimental & Other
-
-- 🃏 **[Poker Agent](https://github.com/jakecho1108/buildwithgemini-poker-agent)**: A poker trainer with a real 800-iteration Monte Carlo equity engine and strategy tips grounded in a poker playbook. <br/> <sub>by [@jakecho1108](https://github.com/jakecho1108)</sub>
+| Capability | Implementation | Service / Model |
+| --- | --- | --- |
+| **Agent Reasoning Core** | ADK Agent (`checkguard/app/agent.py`) | `gemini-3.6-flash` |
+| **Durable Memory** | `PreloadMemoryTool` + Session Callback | **Vertex AI Memory Bank** |
+| **Database & History** | Firestore collections (`check_records`, `entity_risk_profiles`) | **Cloud Firestore** |
+| **Asset Storage** | Public media bucket (`checkguard-media-*`) | **Google Cloud Storage** |
+| **Marketing Images** | `generate_marketing_image` | `gemini-3.1-flash-lite-image` |
+| **Marketing Videos** | `generate_promotional_video` | `gemini-omni-flash-preview` |
+| **Code Execution** | `AgentEngineSandboxCodeExecutor` | **Agent Platform Sandbox** |
+| **Agent UI** | A2UI schema manager + `a2ui_callback` | **A2UI v0.8** |
+| **Web Frontend** | FastAPI A2A Proxy + Chat UI | **FastAPI** |
+| **Bank Verification** | `verify_bank_institution` | **FDIC BankFind API** |
+| **Location Verification** | `geocode_address`, `find_nearby_places` | **Google Maps & Places APIs** |
 
 ---
 
-## 🧠 What's in this Repo
+## 📁 Repository Structure
 
-The `.agents/` folder teaches Antigravity how to build agents on Google Cloud.
-
-### Skills
-
-A **skill** is a bundle of instructions that loads automatically when it's relevant, so the agent gets the workflow right in fewer steps instead of rediscovering it each time.
-
-| Skill | What it does |
-| --- | --- |
-| [`pick-your-agent-project`](.agents/skills/pick-your-agent-project/SKILL.md) | Brainstorm your app idea and write a project brief |
-| [`troubleshoot-lab-setup`](.agents/skills/troubleshoot-lab-setup/SKILL.md) | Verify your environment and fix common setup errors |
-| [`memory-bank-setup`](.agents/skills/setup-memory-bank/SKILL.md) | Add cross-session memory to your agent with Vertex AI Memory Bank |
-| [`enable-a2ui`](.agents/skills/enable-a2ui/SKILL.md) | Make your agent reply with rich UI cards (A2UI) in the ADK dev UI |
-| [`build-agent-frontend`](.agents/skills/build-agent-frontend/SKILL.md) | Generate a FastAPI chat frontend and ship it to Cloud Run |
-| [`record-demo`](.agents/skills/record-demo/SKILL.md) | Record a branded demo video of your agent, with an optional AI soundtrack |
-| [`publish-to-github`](.agents/skills/publish-to-github/SKILL.md) | Publish your finished project to your own GitHub and submit it for swag |
-
-### Pre-configured tools (MCP)
-
-[`.agents/mcp_config.json`](.agents/mcp_config.json) wires up two [Model Context Protocol](https://modelcontextprotocol.io/) servers that authenticate with your gcloud credentials, so the agent can look things up instead of guessing:
-
-- **Firebase**: work directly with Firestore and other Firebase services
-- **Google Developer Knowledge**: grounded access to Google's official docs (Cloud, Firebase, ADK, Agent Platform)
-
-### Layout
-
-```text
-.agents/
-├── mcp_config.json    # Firebase + Developer Knowledge MCP servers
-├── rules/             # workspace rules (only deploy when asked)
-└── skills/            # the workshop skills listed above
+```
+.
+├── assets/
+│   ├── build-with-gemini-banner.png
+│   └── demo.gif                     # Real screen-capture walkthrough
+├── checkguard/
+│   ├── agents-cli-manifest.yaml     # Agent deployment manifest
+│   ├── app/
+│   │   ├── agent.py                 # Core ADK agent, tools, and callbacks
+│   │   ├── a2ui_utils.py            # A2UI formatting callback
+│   │   ├── firestore_tools.py       # Firestore queries and statistics calculation
+│   │   └── fast_api_app.py          # FastAPI application wrapper
+│   ├── frontend/
+│   │   ├── main.py                  # FastAPI proxy (A2A protocol client)
+│   │   └── static/index.html        # Chat interface with inline A2UI renderer
+│   ├── seed_firestore.py            # Mock check records and risk profiles seeder
+│   └── pyproject.toml               # Python dependencies and project metadata
+└── project_brief.md                 # Original project design brief
 ```
 
 ---
 
-## 🧰 Build Your Own
+## 🚀 Running the Project Locally
 
-The full, step-by-step walkthrough lives on the **[lab guide](https://cszhu.github.io/build-with-gemini/)**. This is the short version.
+### 1. Prerequisites
 
-**Prerequisites** (the lab workstation comes with all of this pre-installed; you'll need it if you're running on your own machine):
+- Python 3.11+
+- [uv](https://docs.astral.sh/uv/) package manager
+- Google Cloud SDK (`gcloud`) authenticated to a project with Vertex AI and Firestore enabled
 
-- A **Google Cloud project** with billing enabled
-- **[Antigravity](https://antigravity.google)** (`agy`), the coding agent that loads the skills above
-- **[agents-cli](https://google.github.io/agents-cli/guide/getting-started/)**, built on the [Agent Development Kit (ADK)](https://google.github.io/adk-docs/)
-- Authenticated gcloud: `gcloud auth login` and `gcloud auth application-default login`
-- A personal **GitHub account** for the final publish-and-submit step
+### 2. Environment Setup
 
-**Quickstart:**
+Configure your Google Cloud project and environment variables:
 
 ```bash
-git clone https://github.com/cszhu/build-with-gemini
-cd build-with-gemini
-agy
+gcloud auth application-default login
+gcloud config set project <YOUR_PROJECT_ID>
+
+cd checkguard
+cp .env.example .env
 ```
 
-On startup, Antigravity scans the `.agents/` folder and loads the skills and tools above automatically. In the AGY prompt:
-
-```text
-/skills            # see the installed skills
-/mcp               # confirm the firebase + google-developer-knowledge tools are connected
+Ensure `.env` contains:
+```env
+GOOGLE_CLOUD_PROJECT=<YOUR_PROJECT_ID>
+GOOGLE_CLOUD_LOCATION=us-central1
+GOOGLE_MAPS_API_KEY=<YOUR_OPTIONAL_MAPS_KEY>
 ```
 
-```text
-Verify my setup.   # runs the troubleshoot-lab-setup skill to check your environment
+### 3. Seed Firestore Database
+
+Initialize sample check records, past bounced transactions, and entity risk profiles:
+
+```bash
+uv run python seed_firestore.py
 ```
 
-Then follow the [lab guide](https://cszhu.github.io/build-with-gemini/) to design, build, deploy, and share your agent, start to finish.
+### 4. Run the Agent & Playground
 
----
+You can launch the ADK development playground to interact with the agent directly:
 
-## 📚 Resources
+```bash
+cd checkguard
+agents-cli playground
+```
 
-- **[Lab guide](https://cszhu.github.io/build-with-gemini/)**: the step-by-step workshop
-- [Antigravity](https://antigravity.google)
-- [agents-cli](https://google.github.io/agents-cli/guide/getting-started/)
-- [Agent Development Kit (ADK)](https://google.github.io/adk-docs/)
-- [Gemini Enterprise Agent Platform](https://docs.cloud.google.com/gemini-enterprise-agent-platform)
+### 5. Run the Custom Web Frontend
 
----
+To run the custom chat frontend with full A2UI card rendering:
 
-## 🤝 Contributing
+```bash
+cd checkguard/frontend
+uv run python main.py
+```
 
-**Built something?** Publish it with the `publish-to-github` skill and submit it through the form it gives you. Submissions get you swag, and standout projects get added to the [Featured Projects](#-featured-projects) gallery above.
-
-**Found a bug?** If you hit a rough edge in a skill or the lab, please [open an issue](https://github.com/cszhu/build-with-gemini/issues).
+The web interface will start at standard local port `8080`.
 
 ---
 
 ## 📄 License
 
-This is not an officially supported Google product and is provided for the Build with Gemini workshop for demonstration purposes only.
+Apache License 2.0. See LICENSE for details.
