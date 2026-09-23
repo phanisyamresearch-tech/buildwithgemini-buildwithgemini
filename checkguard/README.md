@@ -50,13 +50,53 @@ CheckGuard assists tellers and managers during check-cashing transactions by exe
 
 ---
 
+## 💬 Try It Out: Demo Prompts
+
+Here are sample prompts that demonstrate each tool and capability in action:
+
+### 1. Check Risk Assessment & History Lookup
+> *"Can you check the risk on a payroll check issued by Apex Logistics to John Doe for $1,200 drawn on JPMorgan Chase?"*
+- **Tools Exercised**: `verify_bank_institution` (FDIC check), `search_check_history` (Firestore ledger), `get_entity_risk_profile` (trust scores), `calculate_cashing_fee_and_payout`, and **A2UI** response card.
+
+### 2. High-Risk / Flagged Customer Detection
+> *"Sarah Connor wants to cash a $4,500 personal check issued by Cyberdyne Systems. What does our history say and what fee applies?"*
+- **Tools Exercised**: `search_check_history` (uncovers returned/fraud checks), `get_entity_risk_profile`, manager override check, fee computation with risk adjustment.
+
+### 3. Business Location & Branch Verification
+> *"The check from BuildMart lists their address as 100 Industrial Pkwy, Kansas City, MO. Can you verify this location and find any nearby bank branches?"*
+- **Tools Exercised**: `geocode_address` (Google Maps Geocoding) and `find_nearby_places` (Google Places API).
+
+### 4. Record a Transaction Decision
+> *"Record an approval for check #9842 presented by John Doe, issued by Apex Logistics for $1,200 with standard payroll fee."*
+- **Tools Exercised**: `record_check_verification` (persists new transaction to Firestore `check_records`).
+
+### 5. Store Manager Operations & Financial Statistics
+> *"Show me our check cashing statistics for 2026. How many checks bounced, what was our total fee revenue, and what are our default losses?"*
+- **Tools Exercised**: `query_business_statistics` (aggregates monthly/annual totals, bounce rates, and fee income from Firestore).
+
+### 6. Marketing Visual Generation (Vertex AI Image Gen + GCS)
+> *"Generate a promotional service graphic for our storefront window advertising instant payroll check cashing with zero waiting."*
+- **Tools Exercised**: `generate_marketing_image` (`gemini-3.1-flash-lite-image`), uploads to Cloud Storage, and renders in an A2UI visual card.
+
+### 7. Marketing Motion Graphic (Omni Video Gen + GCS)
+> *"Create a 5-second dynamic motion graphic video highlighting fast, trusted check verification for our digital board."*
+- **Tools Exercised**: `generate_promotional_video` (`gemini-omni-flash-preview`) and Cloud Storage asset upload.
+
+### 8. Durable Memory (Across Sessions)
+> *"Remember that our store limit for unverified first-time personal checks is strictly $500 without manager sign-off."*
+- **Tools Exercised**: `generate_memories_callback` + `PreloadMemoryTool` via **Vertex AI Memory Bank**.
+
+---
+
 ## 📁 Repository Structure
 
 ```
 .
 ├── assets/
 │   ├── build-with-gemini-banner.png
-│   └── demo.gif                     # Real screen-capture walkthrough
+│   ├── demo.gif                     # Real screen-capture walkthrough
+│   ├── demo.mp4                     # Full MP4 recording
+│   └── demo_lofi.mp4                # Demo with background soundtrack
 ├── checkguard/
 │   ├── agents-cli-manifest.yaml     # Agent deployment manifest
 │   ├── app/
