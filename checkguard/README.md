@@ -105,6 +105,7 @@ Here are sample prompts that demonstrate each tool and capability in action:
 ```
 .
 ├── assets/
+│   ├── antigravity_tutorial_walkthrough.mp4  # Complete end-to-end architecture & live demo tutorial
 │   ├── build-with-gemini-banner.png
 │   ├── cloudrun_demo.mp4            # Live recording against Cloud Run URL with prompts
 │   ├── demo.gif                     # Real screen-capture walkthrough
