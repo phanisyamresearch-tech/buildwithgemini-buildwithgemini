@@ -106,6 +106,7 @@ Here are sample prompts that demonstrate each tool and capability in action:
 .
 ├── assets/
 │   ├── build-with-gemini-banner.png
+│   ├── cloudrun_demo.mp4            # Live recording against Cloud Run URL with prompts
 │   ├── demo.gif                     # Real screen-capture walkthrough
 │   ├── demo.mp4                     # Full MP4 recording
 │   └── demo_lofi.mp4                # Demo with background soundtrack
