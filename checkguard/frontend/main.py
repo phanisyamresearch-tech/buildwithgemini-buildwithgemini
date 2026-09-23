@@ -123,14 +123,26 @@ def _extract_parts(parts: list) -> list[dict]:
     out: list[dict] = []
     for p in parts:
         root = getattr(p, "root", p)
-        if isinstance(root, TextPart) and getattr(root, "text", None):
-            out.append({"kind": "text", "text": root.text})
-        elif getattr(root, "data", None) is not None:
-            meta = getattr(root, "metadata", None) or {}
-            mime = meta.get("mimeType") if isinstance(meta, dict) else None
-            if mime == _A2UI_MIME:
-                out.append({"kind": "a2ui", "data": root.data})
-        elif isinstance(root, FilePart):
+        text_val = getattr(root, "text", None)
+        if text_val:
+            out.append({"kind": "text", "text": text_val})
+            continue
+
+        data_obj = getattr(root, "data", None)
+        if data_obj is not None:
+            if isinstance(data_obj, dict):
+                meta = data_obj.get("metadata") or getattr(root, "metadata", None) or {}
+                mime = meta.get("mimeType") if isinstance(meta, dict) else None
+                if mime == _A2UI_MIME and "data" in data_obj:
+                    out.append({"kind": "a2ui", "data": data_obj["data"]})
+                    continue
+                elif mime == _A2UI_MIME:
+                    out.append({"kind": "a2ui", "data": data_obj})
+                    continue
+            out.append({"kind": "a2ui", "data": data_obj})
+            continue
+
+        if isinstance(root, FilePart):
             uri = getattr(getattr(root, "file", None), "uri", None)
             if uri:
                 out.append({"kind": "text", "text": uri})
